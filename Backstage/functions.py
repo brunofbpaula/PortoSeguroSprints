@@ -1,15 +1,7 @@
 from random import randint
 
 
-# INÍCIO - BOAS VINDAS E TRATAMENTO POR NOME
-def mensagem_boas_vindas():
-    """
-    Função que printa uma mensagem de boas-vindas.
-    :return: None
-    """
-    print("[OLÁ]")
-    print("Bem-vindo (a) ao serviço de seguro auto para veículos pesados da Porto Seguro!")
-    pular_linha()
+
 
 
 def salvar_nome_usuario():
