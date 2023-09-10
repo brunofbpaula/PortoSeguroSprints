@@ -1,4 +1,4 @@
-from Funcoes.funcoes import *
+from Functions.funcoes import *
 
 mensagem_boas_vindas()
 nome = salvar_nome_usuario()
