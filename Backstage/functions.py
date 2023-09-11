@@ -27,14 +27,17 @@ def nome_cliente():
     print("[NOME COMPLETO] Da mesma forma que está nos seus documentos oficiais de identificação.")
     try:
         nome = input("Digite seu nome completo: ")
-        while nome != str(nome) or not re.match(r"^^[A-Z][a-z]+(?: [A-Z][a-z]+)*$", nome):
+
+        # Confere se o nome é válido
+        while nome != str(nome) or not re.match(r"^[A-Z][a-z]+(?: [A-Z][a-z]+)*$", nome):
             print("[DIGITE UM NOME VÁLIDO]")
             nome = input("Digite seu nome completo: ")
+
+        return nome
+
     except ValueError:
         print("Erro desconhecido")
         raise ValueError
-    finally:
-        return nome
 
 
 def dt_nascimento_cliente():
@@ -71,4 +74,36 @@ def dt_nascimento_cliente():
 
 
 def nr_cpf_cliente():
+    """
+    Função que retorna um número de CPF no formato correto. Não há garantia da sua veracidade.
+    :return: String.
+    """
+    print('[NÚMERO DE CPF] Da mesma forma que consta nos seus documentos oficiais. Ex: 123.456.789-10')
+    cpf = input("Digite seu CPF: ")
 
+    # Regex para CPF (não checa se é válido)
+    while cpf is not re.match(r"\b\d{3}\.\d{3}\.\d{3}-\d{2}\b", cpf):
+        print("[DIGITE UM NÚMERO DE CPF VÁLIDO]")
+        cpf = input("Digite seu número de CPF: ")
+    return cpf
+
+
+def email_cliente():
+    print("[EMAIL] O seu melhor e-mail é o recomendado.")
+    email = input("Digite o e-mail: ")
+
+    # Regex pra e-mail
+    while not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        print("[DIGITE UM E-MAIL VÁLIDO]")
+        email = input("Digite o e-mail: ")
+
+    return email
+
+
+def checa_senha():
+    print("[SENHA] A sua senha deve conter no mínimo seis digitos.")
+    senha_login = input("Digite a senha: ")
+    while not re.match(r"^.{6,}$", senha_login):
+        print("[DIGITE UMA SENHA VÁLIDA]")
+        senha_login = input("Digite a senha: ")
+    return senha_login

@@ -42,7 +42,7 @@ def cadastro(dic_usuarios):
     while refazer == "R":
         nome = functions.nome_cliente()
         dt_nascimento = functions.dt_nascimento_cliente()
-        nr_cpf =
+        nr_cpf = functions.nr_cpf_cliente()
         email =
         senha =
         usuario = classes.Cliente(nome, dt_nascimento, nr_cpf, email, senha)
