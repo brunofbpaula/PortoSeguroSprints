@@ -5,7 +5,6 @@ class Cliente:
     """
     Classe para Cliente, suas características e métodos.
     """
-
     def __init__(self, nome, dt_nascimento, nr_cpf, email, senha):
         self.nome = nome
         self.dt_nascimento = dt_nascimento
