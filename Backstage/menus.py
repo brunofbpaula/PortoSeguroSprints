@@ -35,17 +35,21 @@ def menu_login():
 
 
 def cadastro(dic_usuarios):
-    print("[CADASTRO]")
+    print("[NOVO CADASTRO]")
     print("Crie seu login preenchendo as informações abaixo.")
+    functions.delay(0.4)
     functions.new_line()
     refazer = "R"
     while refazer == "R":
         nome = functions.nome_cliente()
         dt_nascimento = functions.dt_nascimento_cliente()
         nr_cpf = functions.nr_cpf_cliente()
-        email =
-        senha =
+        email = functions.email_cliente()
+        senha = functions.senha_cliente()
         usuario = classes.Cliente(nome, dt_nascimento, nr_cpf, email, senha)
+        dic_usuarios[nr_cpf] = usuario
+        functions.delay(0.4)
+        functions.new_line()
         print("[CONFIRMAÇÃO]")
         print("Certifique-se de que todos os dados fornecidos estão corretos.")
         print("[C] Continuar")
@@ -55,15 +59,17 @@ def cadastro(dic_usuarios):
             print("[ESCOLHA UMA OPÇÃO VÁLIDA]")
             refazer = input("Escolha uma opção: ").upper().strip()
         if refazer == "C":
-            pula_linha()
+            functions.new_line()
             print("[TUDO CERTO]")
             print("Acesse o menu fazendo login com seu e-mail e senha.")
             return dic_usuarios
         elif refazer == "R":
             print("Tudo bem! Tente novamente.")
-            pula_linha()
+            functions.new_line()
             continue
     return dic_usuarios
 
+
 if __name__ == "__main__":
-    menu_login()
+    dic = {}
+    dic = cadastro(dic)

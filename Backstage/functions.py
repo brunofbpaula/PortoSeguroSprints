@@ -29,7 +29,7 @@ def nome_cliente():
         nome = input("Digite seu nome completo: ")
 
         # Confere se o nome é válido
-        while nome != str(nome) or not re.match(r"^[A-Z][a-z]+(?: [A-Z][a-z]+)*$", nome):
+        while nome != str(nome) or not re.match(r"\b[A-Z][a-z]+([ -][A-Z][a-z]+)*\b", nome):
             print("[DIGITE UM NOME VÁLIDO]")
             nome = input("Digite seu nome completo: ")
 
@@ -59,7 +59,7 @@ def dt_nascimento_cliente():
                 # Confere se o ano é válido
                 if 1900 <= ano <= 2050:
                     # Formata para yyyy/mm/dd
-                    dt = f"{ano:04d}/{mes:02d}/{dia:02d}"
+                    dt = f"{ano:04d}-{mes:02d}-{dia:02d}"
                 else:
                     print('[DATA INVÁLIDA]')
                     continue
@@ -82,7 +82,8 @@ def nr_cpf_cliente():
     cpf = input("Digite seu CPF: ")
 
     # Regex para CPF (não checa se é válido)
-    while cpf is not re.match(r"\b\d{3}\.\d{3}\.\d{3}-\d{2}\b", cpf):
+    padrao = r'\b\d{3}\.\d{3}\.\d{3}-\d{2}\b'
+    while not re.match(padrao, cpf):
         print("[DIGITE UM NÚMERO DE CPF VÁLIDO]")
         cpf = input("Digite seu número de CPF: ")
     return cpf
@@ -100,10 +101,13 @@ def email_cliente():
     return email
 
 
-def checa_senha():
+def senha_cliente():
     print("[SENHA] A sua senha deve conter no mínimo seis digitos.")
-    senha_login = input("Digite a senha: ")
-    while not re.match(r"^.{6,}$", senha_login):
+    senha = input("Digite a senha: ")
+
+    # Regex para senha de no mínimo seis dígitos
+    while not re.match(r"^.{6,}$", senha):
         print("[DIGITE UMA SENHA VÁLIDA]")
-        senha_login = input("Digite a senha: ")
-    return senha_login
+        senha = input("Digite a senha: ")
+
+    return senha
