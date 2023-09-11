@@ -34,6 +34,30 @@ def menu_login():
         return escolha
 
 
+def area_login(dic_usuarios):
+    while True:
+        escolha = menu_login()
+        if escolha == "S":
+            chave_vazia = None  # Chave sem valor, entra na condicional do menu que retorna (para) a função.
+            return dic_usuarios, chave_vazia
+        elif escolha == "C":
+            functions.new_line()
+            cadastro(dic_usuarios)  # Dicionário atualizado
+            functions.new_line()
+            continue
+        elif escolha == "L":
+            functions.new_line()
+            chave_dic = logar(dic_usuarios)  # Chave valorada, parâmetro da função menu
+            functions.new_line()
+            if chave_dic is not None:
+                return dic_usuarios, chave_dic
+            else:
+                continue
+        else:
+            print("Oops!")  # Nunca vai executar... eu acho.
+            return
+
+
 def cadastro(dic_usuarios):
     print("[NOVO CADASTRO]")
     print("Crie seu login preenchendo as informações abaixo.")

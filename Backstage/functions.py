@@ -46,9 +46,10 @@ def dt_nascimento_cliente():
     :return: Data de nascimento.
     """
     print("[DATA DE NASCIMENTO] No formato \'DIA/MÊS/ANO\'.")
-    while True:
-        dt = input("Digite sua data de nascimento: ")
-        try:
+
+    try:
+        while True:
+            dt = input("Digite sua data de nascimento: ")
             # Divide a data em fragmentos
             fragmentos = dt.split('/')
 
@@ -60,17 +61,16 @@ def dt_nascimento_cliente():
                 if 1900 <= ano <= 2050:
                     # Formata para yyyy/mm/dd
                     dt = f"{ano:04d}-{mes:02d}-{dia:02d}"
+                    return dt
                 else:
                     print('[DATA INVÁLIDA]')
                     continue
             else:
                 print('[DATA INVÁLIDA]')
                 continue
-        except ValueError:
-            print("ERRO")
-            raise ValueError
-        finally:
-            return dt
+    except ValueError:
+        print("ERRO")
+        raise ValueError
 
 
 def nr_cpf_cliente():
@@ -78,7 +78,7 @@ def nr_cpf_cliente():
     Função que retorna um número de CPF no formato correto. Não há garantia da sua veracidade.
     :return: String.
     """
-    print('[NÚMERO DE CPF] Da mesma forma que consta nos seus documentos oficiais. Ex: 123.456.789-10')
+    print('[NÚMERO DE CPF] Da mesma forma que consta nos seus documentos oficiais. EX: 123.456.789-10.')
     cpf = input("Digite seu CPF: ")
 
     # Regex para CPF (não checa se é válido)
