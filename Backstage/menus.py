@@ -1,5 +1,6 @@
 import functions
 import classes
+from random import randint
 
 
 def mensagem_boas_vindas():
@@ -85,7 +86,9 @@ def cadastro(dic_usuarios):
         if refazer == "C":
             functions.new_line()
             print("[TUDO CERTO]")
-            print("Entrando...")
+            print("Salvando...")
+            functions.delay(1)
+            print("Acesse o menu fazendo login com CPF e SENHA.")
             functions.delay(1)
             return dic_usuarios
         elif refazer == "R":
@@ -149,10 +152,10 @@ def itens_menu(nome):
     """
     print("[MENU PRINCIPAL]")
     print(f"{nome}, por favor, selecione um dos itens abaixo: ")
-    print("[1] SOLICITAR SOCORRO")
-    print("[2] EDITAR SOCORRO")
-    print("[3] PESQUISAR SOCORRO")
-    print("[4] EXCLUIR SOCORRO")
+    print("[1] AVISAR SINISTRO")
+    print("[2] EDITAR AVISO DE SINISTRO")
+    print("[3] PESQUISAR AVISO DE SINISTRO")
+    print("[4] EXCLUIR AVISO DE SINISTRO")
     print("[5] VOLTAR PARA LOGIN")
     print("[6] SAIR")
 
@@ -162,9 +165,10 @@ def menu(dic_usuarios, nr_cpf):
     Função que imprime e controla o fluxo do menu, contém todos os itens.
     :param nr_cpf: Número de CPF do usuário.
     :param dic_usuarios: Dicionário do qual será extraído as
-    informações relevante do usuário para funcionamento do menu e suas respectivas funções.
+    informações relevante do usuário para funcionamento do menu e as suas funções.
     :return: None.
     """
+    sinistros = {}
     while True:
 
         # Se a chave não tem valor, o usuário escolheu sair
@@ -180,27 +184,258 @@ def menu(dic_usuarios, nr_cpf):
         escolha = functions.escolher_item()  # ITEM ESCOLHIDO PELO USUÁRIO
         functions.new_line()
 
-        # Itens
-        if escolha == "B":
-            biblioteca_verde()  # BIBLIOTECA VERDE
+        # Itens do menu
+
+        # Avisar sinistro
+        if escolha == "1":
+            aviso_sinistro(nome, sinistros)  # BIBLIOTECA VERDE
             continue
-        elif escolha == "C":
-            clima(cidade)  # CLIMA E PREVISÃO
+
+        # Editar aviso de sinistro
+        elif escolha == "2":
+            print("[EDITAR AVISO DE SINISTRO]")
+            print("EM MANUTENÇÃO. TENTE NOVAMENTE MAIS TARDE.")
             continue
-        elif escolha == "V":
-            dic_usuarios, nr_cpf = area_login(dic_usuarios)  # VOLTAR AO LOGIN
+
+        # Pesquisar aviso de sinistro
+        elif escolha == "3":
+            pesquisar_sinistro(dic_usuarios, nr_cpf, sinistros)
             continue
-        elif escolha == "R":
-            recomendacao(cidade)  # RECOMENDAÇÃO DA IA
+
+        # Excluir aviso de sinistro
+        elif escolha == "4":
+            excluir_sinistro(sinistros)
             continue
-        elif escolha == "M":
-            monitoramento_solo(endereco)  # INFORMAÇÕES DO SOLO
+
+        # Voltar para o login
+        elif escolha == "5":
+            dic_usuarios, nr_cpf = area_login(dic_usuarios)
             continue
+
+        # Sair do menu
         else:
             break
     return
 
 
+# ITENS DO MENU
+def aviso_sinistro(nome, sinistros):
+    """
+    Função para ativar o processo inteiro de aviso de sinistro.
+    :param nome: Nome do usuário.
+    :param sinistros: Dicionário em que o sinistro será armazenado.
+    :return: Novo valor do dicionário.
+    """
+    print("[AVISAR SINISTRO]")
+    print(f"Vamos atender o seu socorro, {nome}. Mas antes, por favor, nos informe alguns dados.")
+    functions.new_line()
+    functions.delay(0.5)
+    opcao = 2
+    while opcao == 2:
+
+        # Dados inseridos nas tabelas contrato e veículo
+        print("[AVISO DE SINISTRO - VEÍCULO]")
+        print("Por favor, preencha os dados presentes em seu contrato abaixo.")
+        apolice = input("Digite o número da sua apólice: ")
+        marca = input("Digite a marca do veículo: ")
+        modelo = input("Digite o modelo do veículo: ")
+
+        # Não-String
+        try:
+            ano_veiculo = int(input("Digite o ano do veículo: "))
+        except ValueError:
+            while True:
+                print('[ANO INVÁLIDO]')
+                ano_veiculo = int(input("Digite o ano do veículo: "))
+                if type(ano_veiculo) == int:
+                    break
+                else:
+                    continue
+
+        placa_veiculo = input("Digite a placa do veículo assegurado: ")
+        nr_chassi = input("Digite o número do chassi do veículo: ")
+
+        # Lista de dados do veículo e contrato
+        dados = [apolice, marca, modelo, ano_veiculo, placa_veiculo, nr_chassi]
+        functions.new_line()
+
+        # Dados inseridos na tabela do local do sinistro
+        print("[AVISO DE SINISTRO - LOCALIZAÇÃO DO VEÍCULO]")
+        print("Preencha os dados da localização atual do véiculo abaixo.")
+        rua = input("Nome da rua: ")
+
+        # Não-String
+        try:
+            numero_rua = int(input("Número da rua: "))
+        except ValueError:
+            while True:
+                print('[ANO INVÁLIDO]')
+                numero_rua = int(input("Número da rua: "))
+                if type(numero_rua) == int:
+                    break
+                else:
+                    continue
+
+        cidade = input("Cidade: ")
+        estado = input("Estado: ")
+
+        # Lista de dados do local do sinistro
+        localizacao = [rua, numero_rua, cidade, estado]
+
+        print('[AVISO DE SINISTRO - PROBLEMA DA OCORRÊNCIA]')
+        menu_problema(nome)
+        problema = escolher_problema()
+
+        # Mudar condição de loop
+        opcao = functions.confirmar()
+
+        # Para loop
+        if opcao == 1:
+
+            # Chave do sinistro
+            numero_protocolo = randint(100000, 999999)
+            # Atualiza dicionário
+            sinistros[numero_protocolo] = {"Dados": dados, "Localização": localizacao, "Problema": problema}
+            functions.new_line()
+            print("[GUINCHO A CAMINHO!]")
+            print("A ocorrência foi realizada. Você pode checar as informações do sinistro "
+                  f"no menu através do número de protocolo {numero_protocolo}.")
+
+            break
+
+        # Refaz
+        if opcao == 2:
+            print("Tudo bem. Preencha os dados novamente.")
+
+    functions.new_line()
+    return sinistros
+
+
+# FUNÇÃO ITEM TRÊS
+def pesquisar_sinistro(dic_usuarios, nr_cpf, sinistros):
+    """
+    Função para pesquisar sinistro.
+    :param nr_cpf: Número de CPF chave de dicionário.
+    :param dic_usuarios: Dicionário de usuários.
+    :param sinistros: Dicionário com todos os sinistros.
+    :return: None
+    """
+    print("[PESQUISADOR DE SINISTRO]")
+    numero_sinistro = int(input("Digite o número do sinistro que você deseja pesquisar: "))
+    sinistro_pesquisado = sinistros.get(numero_sinistro)
+    if sinistro_pesquisado is not None:
+        print(f"O sinistro {numero_sinistro} foi encontrado!")
+        functions.new_line()
+        resumo_sinistro(dic_usuarios, nr_cpf, sinistros, numero_sinistro)
+    else:
+        print(f"O sinistro {numero_sinistro} não foi encontrado.")
+    functions.new_line()
+
+
+# FUNÇÃO ITEM QUATRO
+def excluir_sinistro(sinistros):
+    """
+    Função que deleta sinistros existentes no dicionário de sinistros.
+    :param sinistros: Dicionário de sinistros.
+    :return: None
+    """
+    print("[EXCLUIR SOCORRO]")
+    print("Atenção. O sinistro digitado será permanentemente deletado.")
+    print("Prosseguir mesmo assim?")
+    opcao = functions.confirmar()
+    if opcao == 1:
+        numero_sinistro = int(input("Digite o número do sinistro: "))
+        sinistro_pesquisado = sinistros.get(numero_sinistro)
+        if sinistro_pesquisado is not None:
+            del sinistros[numero_sinistro]
+            print(f"O sinistro {numero_sinistro} foi deletado.")
+        else:
+            print(f"O sinistro {numero_sinistro} não foi encontrado.")
+    else:
+        print("Voltando ao menu...")
+    functions.new_line()
+
+
+def menu_problema(nome):
+    """
+    Função que printa o menu para escolha de sinistro (problema).
+    :param nome: Nome pelo qual o usúario escolher ser chamado anteriormente.
+    :return: None
+    """
+    print(f"{nome}, por favor, selecione o item que melhor descreve o sinistro.")
+    print("[1] PANE")
+    print("[2] COLISÃO")
+    print("[3] INCÊNDIO")
+    print("[4] TOMBAMENTO")
+    print("[5] DESASTRE NATURAL")
+
+
+# ESCOLHER SINISTRO
+def escolher_problema():
+    """
+    Função para escolher um dos itens do menu de sinistros.
+    :return: Variável do problema em String.
+    """
+    problema_escolhido = float(input("Digite o número do problema: "))
+    while problema_escolhido != int(problema_escolhido) or problema_escolhido > 5 or problema_escolhido < 1:
+        print('[OPÇÃO INVÁLIDA]')
+        problema_escolhido = float(input("Digite o número do sinistro: "))
+    if problema_escolhido == 1:
+        problema_escolhido = "PANE"
+    elif problema_escolhido == 2:
+        problema_escolhido = "COLISÃO"
+    elif problema_escolhido == 3:
+        problema_escolhido = "INCÊNDIO"
+    elif problema_escolhido == 4:
+        problema_escolhido = "TOMBAMENTO"
+    else:
+        problema_escolhido = "DESASTRE NATURAL"
+    return problema_escolhido
+
+
+def resumo_sinistro(dic_usuarios, nr_cpf, sinistros, numero):
+    """
+    Função que printa um resumo da ocorrência de sinistro.
+    :param nr_cpf: Número de CPF, chave de dicionário.
+    :param dic_usuarios: Dicionário de usuários.
+    :param sinistros: Dicionário de sinistros.
+    :param numero: Número do sinistro, chave de dicionário.
+    :return: None
+    """
+    marca = sinistros[numero]['Dados'][1]
+    modelo = sinistros[numero]['Dados'][2]
+    ano = sinistros[numero]['Dados'][3]
+    placa = sinistros[numero]['Dados'][4]
+
+    rua = sinistros[numero]["Localização"][0]
+    nr_rua = sinistros[numero]["Localização"][1]
+    cidade = sinistros[numero]["Localização"][2]
+    estado = sinistros[numero]["Localização"][3]
+
+    print(f"[AVISO DE SINISTRO Nº {numero}]")
+
+    # Contrato
+    print("[ASSEGURADO]")
+    print(f'Nome: {dic_usuarios[nr_cpf].nome}')
+    print(f'Número de CPF: {nr_cpf}')
+
+    # Veículo
+    print("[VEÍCULO DO SINISTRO]")
+    print(f'Modelo: {marca, modelo, ano}')
+    print(f"Placa: {placa}")
+
+    # Sinistro
+    print("[SINISTRO DA OCORRÊNCIA]")
+    print(sinistros[numero]["Problema"][0])  # Sinistro
+
+    # Local do Sinistro
+    print("[LOCALIZAÇÃO ATUAL DO VEÍCULO]")
+    print(f'{rua, nr_rua, cidade, estado}')
+
+
 if __name__ == "__main__":
+    mensagem_boas_vindas()
     dic = {}
-    area_login(dic)
+    dic, cpf = area_login(dic)
+    menu(dic, cpf)
+    functions.volte_sempre()

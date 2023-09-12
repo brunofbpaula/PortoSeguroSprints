@@ -138,3 +138,26 @@ def escolher_item():
         print("[OPÇÃO INVÁLIDA]")
         item_escolhido = float(input("Digite o número do item desejado: "))
     return item_escolhido
+
+
+def confirmar():
+    """
+    Usado para a validação de perguntas.
+    :return: Valor "SIM" (1) ou "NÃO" (2)
+    """
+    print("[1] SIM")
+    print("[2] NÃO")
+    opcao = float(input("Digite o número da opção: "))
+    while opcao != 1 and opcao != 2:
+        print("[OPÇÃO INVÁLIDA]")
+        opcao = float(input("Digite o número da opção: "))
+    return opcao
+
+
+def volte_sempre():
+    """
+    Função que imprime uma mensagem de despedida.
+    :return: None.
+    """
+    print("[VOLTE SEMPRE]")
+    print("Até mais!")
