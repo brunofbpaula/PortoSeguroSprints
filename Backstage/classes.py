@@ -24,5 +24,5 @@ class Cliente:
 
 
 if __name__ == "__main__":
-    teste = Cliente('Bruno', '2004-09-29', '531.160.718-10', 'deepcooper@outlook.com', '2112121')
+    teste = Cliente('Bruno', '2004-09-29', '121.121.121.-12', 'deepcooper@outlook.com', '2112121')
     teste.display()
