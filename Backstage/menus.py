@@ -138,8 +138,9 @@ def logar(dic_usuarios):
             else:
                 print("[SENHA INCORRETA]")
                 escolha = functions.tentar_novamente()
+                functions.new_line()
                 if escolha == "S":
-                    logar(dic_usuarios)
+                    continue
                 else:
                     break
 
@@ -187,28 +188,30 @@ def menu(dic_usuarios, nr_cpf):
         # Itens do menu
 
         # Avisar sinistro
-        if escolha == "1":
-            aviso_sinistro(nome, sinistros)  # BIBLIOTECA VERDE
+        if escolha == 1:
+            aviso_sinistro(nome, sinistros)
             continue
 
         # Editar aviso de sinistro
-        elif escolha == "2":
+        elif escolha == 2:
             print("[EDITAR AVISO DE SINISTRO]")
             print("EM MANUTENÇÃO. TENTE NOVAMENTE MAIS TARDE.")
+            functions.new_line()
+            functions.delay(3)
             continue
 
         # Pesquisar aviso de sinistro
-        elif escolha == "3":
+        elif escolha == 3:
             pesquisar_sinistro(dic_usuarios, nr_cpf, sinistros)
             continue
 
         # Excluir aviso de sinistro
-        elif escolha == "4":
+        elif escolha == 4:
             excluir_sinistro(sinistros)
             continue
 
         # Voltar para o login
-        elif escolha == "5":
+        elif escolha == 5:
             dic_usuarios, nr_cpf = area_login(dic_usuarios)
             continue
 
@@ -257,6 +260,7 @@ def aviso_sinistro(nome, sinistros):
 
         # Lista de dados do veículo e contrato
         dados = [apolice, marca, modelo, ano_veiculo, placa_veiculo, nr_chassi]
+        functions.delay(1)
         functions.new_line()
 
         # Dados inseridos na tabela do local do sinistro
@@ -281,12 +285,18 @@ def aviso_sinistro(nome, sinistros):
 
         # Lista de dados do local do sinistro
         localizacao = [rua, numero_rua, cidade, estado]
+        functions.new_line()
+        functions.delay(1)
 
         print('[AVISO DE SINISTRO - PROBLEMA DA OCORRÊNCIA]')
         menu_problema(nome)
         problema = escolher_problema()
+        functions.new_line()
+        functions.delay(1)
 
         # Mudar condição de loop
+        print("[CONFIRME AS INFORMAÇÕES PASSADAS]")
+        print("Todos os dados estão corretos?")
         opcao = functions.confirmar()
 
         # Para loop
@@ -300,7 +310,9 @@ def aviso_sinistro(nome, sinistros):
             print("[GUINCHO A CAMINHO!]")
             print("A ocorrência foi realizada. Você pode checar as informações do sinistro "
                   f"no menu através do número de protocolo {numero_protocolo}.")
-
+            functions.new_line()
+            print("Voltando ao menu...")
+            functions.delay(10)
             break
 
         # Refaz
@@ -326,7 +338,11 @@ def pesquisar_sinistro(dic_usuarios, nr_cpf, sinistros):
     if sinistro_pesquisado is not None:
         print(f"O sinistro {numero_sinistro} foi encontrado!")
         functions.new_line()
+        functions.delay(2)
         resumo_sinistro(dic_usuarios, nr_cpf, sinistros, numero_sinistro)
+        functions.new_line()
+        print("Voltando ao menu...")
+        functions.delay(10)
     else:
         print(f"O sinistro {numero_sinistro} não foi encontrado.")
     functions.new_line()
@@ -349,6 +365,9 @@ def excluir_sinistro(sinistros):
         if sinistro_pesquisado is not None:
             del sinistros[numero_sinistro]
             print(f"O sinistro {numero_sinistro} foi deletado.")
+            functions.new_line()
+            print("Voltando ao menu...")
+            functions.delay(5)
         else:
             print(f"O sinistro {numero_sinistro} não foi encontrado.")
     else:
@@ -421,16 +440,16 @@ def resumo_sinistro(dic_usuarios, nr_cpf, sinistros, numero):
 
     # Veículo
     print("[VEÍCULO DO SINISTRO]")
-    print(f'Modelo: {marca, modelo, ano}')
+    print(f'Modelo: {marca} {modelo} {ano}')
     print(f"Placa: {placa}")
 
     # Sinistro
     print("[SINISTRO DA OCORRÊNCIA]")
-    print(sinistros[numero]["Problema"][0])  # Sinistro
+    print(sinistros[numero]["Problema"])  # Sinistro
 
     # Local do Sinistro
     print("[LOCALIZAÇÃO ATUAL DO VEÍCULO]")
-    print(f'{rua, nr_rua, cidade, estado}')
+    print(f'{rua} {nr_rua} {cidade} {estado}')
 
 
 if __name__ == "__main__":

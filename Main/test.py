@@ -1,4 +1,7 @@
 from Backstage.menus import *
 
 mensagem_boas_vindas()
-usuarios = {}
+dic = {}
+dic, cpf = area_login(dic)
+menu(dic, cpf)
+functions.volte_sempre()
