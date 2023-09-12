@@ -111,3 +111,30 @@ def senha_cliente():
         senha = input("Digite a senha: ")
 
     return senha
+
+
+def tentar_novamente():
+    """
+    Função que imprime opção de retorno a fase anterior e retorna a escolha.
+    :return: Escolha do menuzinho, String.
+    """
+    print("Tentar novamente?")
+    print("[S] Sim")
+    print("[V] Voltar")
+    escolha = input("Escolha uma opção: ").upper().strip()
+    while escolha != str(escolha) or escolha != "S" and escolha != "V":
+        print("[ESCOLHA UMA OPÇÃO VÁLIDA]")
+        escolha = input("Escolha uma opção: ").upper().strip()
+    return escolha
+
+
+def escolher_item():
+    """
+    Função para escolher um dos itens do menu principal.
+    :return: Número do item escolhido.
+    """
+    item_escolhido = float(input("Digite o número do item desejado: "))
+    while item_escolhido != int(item_escolhido) or item_escolhido > 6 or item_escolhido < 1:
+        print("[OPÇÃO INVÁLIDA]")
+        item_escolhido = float(input("Digite o número do item desejado: "))
+    return item_escolhido

@@ -85,7 +85,8 @@ def cadastro(dic_usuarios):
         if refazer == "C":
             functions.new_line()
             print("[TUDO CERTO]")
-            print("Acesse o menu fazendo login com seu e-mail e senha.")
+            print("Entrando...")
+            functions.delay(1)
             return dic_usuarios
         elif refazer == "R":
             print("Tudo bem! Tente novamente.")
@@ -94,6 +95,112 @@ def cadastro(dic_usuarios):
     return dic_usuarios
 
 
+def logar(dic_usuarios):
+    """
+    Função que loga o usuário, validando CPF e senha.
+    :param dic_usuarios: Dicionário com todos os usuários, com a chave sendo o CPF.
+    :return: Chave do dicionário.
+    """
+    while True:
+        print("[ÁREA DE LOGIN]")
+
+        # Procura a chave no dicionário
+        nr_cpf = input("Digite o seu CPF: ")
+        validacao_email = dic_usuarios.get(nr_cpf)
+
+        # Se não achar, dá a opção de tentar novamente ou sair
+        if validacao_email is None:
+            print("[CPF NÃO ENCONTRADO]")
+            escolha = functions.tentar_novamente()
+            if escolha == "S":
+                functions.new_line()
+                continue
+            else:
+                break
+
+        # Se achar, verifica se a senha é a mesma digitada
+        else:
+            senha_login = input("Digite a sua senha: ")
+            valida_senha = dic_usuarios[nr_cpf]
+
+            # Loga o usuário
+            if valida_senha.senha == senha_login:
+                functions.delay(0.5)
+                functions.new_line()
+                print("Entrando...")
+                functions.delay(1)
+                return nr_cpf
+
+            # Outra tentativa ou sair
+            else:
+                print("[SENHA INCORRETA]")
+                escolha = functions.tentar_novamente()
+                if escolha == "S":
+                    logar(dic_usuarios)
+                else:
+                    break
+
+
+def itens_menu(nome):
+    """
+    Função que printa os itens do menu principal.
+    :param nome: Nome do usuário.
+    :return: None
+    """
+    print("[MENU PRINCIPAL]")
+    print(f"{nome}, por favor, selecione um dos itens abaixo: ")
+    print("[1] SOLICITAR SOCORRO")
+    print("[2] EDITAR SOCORRO")
+    print("[3] PESQUISAR SOCORRO")
+    print("[4] EXCLUIR SOCORRO")
+    print("[5] VOLTAR PARA LOGIN")
+    print("[6] SAIR")
+
+
+def menu(dic_usuarios, nr_cpf):
+    """
+    Função que imprime e controla o fluxo do menu, contém todos os itens.
+    :param nr_cpf: Número de CPF do usuário.
+    :param dic_usuarios: Dicionário do qual será extraído as
+    informações relevante do usuário para funcionamento do menu e suas respectivas funções.
+    :return: None.
+    """
+    while True:
+
+        # Se a chave não tem valor, o usuário escolheu sair
+        if nr_cpf is None:
+            functions.new_line()
+            return
+
+        # Nome do usuário
+        nome = dic_usuarios[nr_cpf].nome.split(" ")[0]
+
+        # Escolhendo item do menu
+        itens_menu(nome)
+        escolha = functions.escolher_item()  # ITEM ESCOLHIDO PELO USUÁRIO
+        functions.new_line()
+
+        # Itens
+        if escolha == "B":
+            biblioteca_verde()  # BIBLIOTECA VERDE
+            continue
+        elif escolha == "C":
+            clima(cidade)  # CLIMA E PREVISÃO
+            continue
+        elif escolha == "V":
+            dic_usuarios, nr_cpf = area_login(dic_usuarios)  # VOLTAR AO LOGIN
+            continue
+        elif escolha == "R":
+            recomendacao(cidade)  # RECOMENDAÇÃO DA IA
+            continue
+        elif escolha == "M":
+            monitoramento_solo(endereco)  # INFORMAÇÕES DO SOLO
+            continue
+        else:
+            break
+    return
+
+
 if __name__ == "__main__":
     dic = {}
-    dic = cadastro(dic)
+    area_login(dic)
