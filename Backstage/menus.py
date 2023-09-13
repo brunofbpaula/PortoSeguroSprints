@@ -312,7 +312,7 @@ def aviso_sinistro(nome, sinistros):
                   f"no menu através do número de protocolo {numero_protocolo}.")
             functions.new_line()
             print("Voltando ao menu...")
-            functions.delay(10)
+            functions.delay(5)
             break
 
         # Refaz
