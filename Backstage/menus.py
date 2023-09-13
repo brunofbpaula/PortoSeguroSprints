@@ -342,7 +342,7 @@ def pesquisar_sinistro(dic_usuarios, nr_cpf, sinistros):
         resumo_sinistro(dic_usuarios, nr_cpf, sinistros, numero_sinistro)
         functions.new_line()
         print("Voltando ao menu...")
-        functions.delay(10)
+        functions.delay(5)
     else:
         print(f"O sinistro {numero_sinistro} não foi encontrado.")
     functions.new_line()
