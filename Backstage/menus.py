@@ -1,5 +1,5 @@
-import functions
-import classes
+from Backstage import functions
+from Backstage import classes
 from random import randint
 
 
