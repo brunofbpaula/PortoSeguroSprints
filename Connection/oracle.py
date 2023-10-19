@@ -54,7 +54,20 @@ def delete(comando, id_pk):
     print('\n[DELETADO COM SUCESSO]\n')
 
 
+def update(comando, lista):
+    cursor.execute(comando, tuple(lista))
+    connection.commit()
+
+    print('\n[ATUALIZADO COM SUCESSO]')
+
+
 if __name__ == "__main__":
+
+    # Scripts
+    inserir = 'INSERT INTO T_POR_CLIENTE(id_cliente, nr_cpf, nome_completo, idade, dt_nascimento, genero)VALUES ' \
+             '(:id_cliente, :nr_cpf, :nome_completo, :idade, :dt_nascimento, :genero)'
+    deletar = 'DELETE FROM T_POR_CLIENTE WHERE id_cliente = :id_cliente'
+    atualizar = 'UPDATE T_POR_CLIENTE SET idade = :idade WHERE id_cliente = :id_cliente'
 
     # Criando usuário de teste
     id_cliente = 5
@@ -67,13 +80,32 @@ if __name__ == "__main__":
 
     # Testando insert - OK
     print(f'Adicionando {nome}...')
-    insert('INSERT INTO T_POR_CLIENTE(id_cliente, nr_cpf, nome_completo, idade, dt_nascimento, genero)VALUES '
-           '(:id_cliente, :nr_cpf, :nome_completo, :idade, :dt_nascimento, :genero)', values)
+    insert(inserir, values)
 
     # Testando delete - OK
     delay(2)
     print(f'Deletando {nome}...')
-    delete('DELETE FROM T_POR_CLIENTE WHERE id_cliente = :id_cliente', id_cliente)
+    delete(deletar, id_cliente)
+
+    # Testando update - OK
+    # Criando usuário de teste
+    delay(2)
+    id_cliente = 44
+    nr_cpf = 98741325679
+    nome = 'Bárbara Geres'
+    idade = 16
+    dt_nascimento = to_datetime('2006-04-19')  # Requer uma conversão para datatime
+    genero = 'Mulher'
+    values = [id_cliente, nr_cpf, nome, idade, dt_nascimento, genero]
+    # Inserindo na tabela
+    print(f'Adicionando {nome}...')
+    insert(inserir, values)
+    # Atualizando a idade
+    delay(1)
+    print(f'Atualizando {nome}...')
+    idade = 17
+    values = [idade, id_cliente]
+    update(atualizar, values)
 
     cursor.close()
     connection.close()
