@@ -61,6 +61,19 @@ def update(comando, lista):
     print('\n[ATUALIZADO COM SUCESSO]')
 
 
+def select(comando, id_pk):
+    """
+    Função que executa o comando SELECT.
+    :param comando: Comando SQL.
+    :param id_pk: Parâmetro da query.
+    :return: Dados da query numa lista.
+    """
+    query = comando + str(id_pk)
+    cursor.execute(query)
+    result = cursor.fetchall()
+    return list(result[0])
+
+
 if __name__ == "__main__":
 
     # Scripts
@@ -68,6 +81,7 @@ if __name__ == "__main__":
              '(:id_cliente, :nr_cpf, :nome_completo, :idade, :dt_nascimento, :genero)'
     deletar = 'DELETE FROM T_POR_CLIENTE WHERE id_cliente = :id_cliente'
     atualizar = 'UPDATE T_POR_CLIENTE SET idade = :idade WHERE id_cliente = :id_cliente'
+    selecionar = 'SELECT * FROM T_POR_CLIENTE WHERE id_cliente = '
 
     # Criando usuário de teste
     id_cliente = 5
@@ -97,15 +111,31 @@ if __name__ == "__main__":
     dt_nascimento = to_datetime('2006-04-19')  # Requer uma conversão para datatime
     genero = 'Mulher'
     values = [id_cliente, nr_cpf, nome, idade, dt_nascimento, genero]
-    # Inserindo na tabela
+    # # Inserindo na tabela
     print(f'Adicionando {nome}...')
     insert(inserir, values)
-    # Atualizando a idade
+    # # Atualizando a idade
     delay(1)
     print(f'Atualizando {nome}...')
     idade = 17
     values = [idade, id_cliente]
     update(atualizar, values)
+
+    # Testando update - OK
+    # Criando usuário de teste
+    delay(2)
+    id_cliente = 6
+    nr_cpf = 12345678910
+    nome = 'Thomas Henry Shelby'
+    idade = 39
+    dt_nascimento = to_datetime('1890-01-01')  # Requer uma conversão para datatime
+    genero = 'Gangster'
+    values = [id_cliente, nr_cpf, nome, idade, dt_nascimento, genero]
+    # Inserindo na tabela
+    print(f'Adicionando {nome}...')
+    insert(inserir, values)
+    # Select
+    print(select(selecionar, id_cliente))
 
     cursor.close()
     connection.close()
