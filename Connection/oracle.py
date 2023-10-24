@@ -126,7 +126,7 @@ if __name__ == "__main__":
     delay(2)
     id_cliente = 6
     nr_cpf = 12345678910
-    nome = 'Thomas Henry Shelby'
+    nome = 'Thomas Michael Shelby'
     idade = 39
     dt_nascimento = to_datetime('1890-01-01')  # Requer uma conversão para datatime
     genero = 'Gangster'
@@ -137,5 +137,6 @@ if __name__ == "__main__":
     # Select
     print(select(selecionar, id_cliente))
 
+    # Fecha conexão
     cursor.close()
     connection.close()
