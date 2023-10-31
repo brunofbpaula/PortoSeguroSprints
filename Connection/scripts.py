@@ -26,7 +26,7 @@ def scripts_cliente(comando, lista=None, nr_cpf=None, variavel=None):
         oracle.update(f'UPDATE T_POR_CLIENTE SET {variavel} = :v WHERE nr_cpf = :nr_cpf', lista)
 
     elif comando == 'SELECT':
-        values = oracle.select('SELECT * FROM T_POR_CLIENTE WHERE id_cliente = ', nr_cpf)
+        values = oracle.select('SELECT * FROM T_POR_CLIENTE WHERE nr_cpf = ', nr_cpf)
         return values
 
     else:
