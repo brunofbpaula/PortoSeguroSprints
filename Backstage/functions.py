@@ -86,6 +86,8 @@ def nr_cpf_cliente():
     while not re.match(padrao, cpf):
         print("[DIGITE UM NÚMERO DE CPF VÁLIDO]")
         cpf = input("Digite seu número de CPF: ")
+
+    cpf = ''.join(filter(str.isdigit, cpf))
     return cpf
 
 

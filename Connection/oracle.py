@@ -71,7 +71,8 @@ def select(comando, id_pk):
     query = comando + str(id_pk)
     cursor.execute(query)
     result = cursor.fetchall()
-    return list(result[0])
+    if result:
+        return list(result[0])
 
 
 if __name__ == "__main__":

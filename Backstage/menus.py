@@ -1,6 +1,7 @@
 from Backstage import functions
 from Backstage import classes
 from random import randint
+from Connection import scripts
 
 
 def mensagem_boas_vindas():
@@ -35,23 +36,28 @@ def menu_login():
         return escolha
 
 
-def area_login(dic_usuarios):
+def area_login():
     while True:
         escolha = menu_login()
+
+        # Sair
         if escolha == "S":
-            chave_vazia = None  # Chave sem valor, entra na condicional do menu que retorna (para) a função.
-            return dic_usuarios, chave_vazia
+            return None
+
+        # Cadastro
         elif escolha == "C":
             functions.new_line()
-            cadastro(dic_usuarios)  # Dicionário atualizado
+            # cadastro()
             functions.new_line()
             continue
+
+        # Login
         elif escolha == "L":
             functions.new_line()
-            chave_dic = logar(dic_usuarios)  # Chave valorada, parâmetro da função menu
+            usuario = logar()
             functions.new_line()
-            if chave_dic is not None:
-                return dic_usuarios, chave_dic
+            if usuario:
+                return usuario
             else:
                 continue
         else:
@@ -72,7 +78,6 @@ def cadastro(dic_usuarios):
         email = functions.email_cliente()
         senha = functions.senha_cliente()
         usuario = classes.Cliente(nome, dt_nascimento, nr_cpf, email, senha)
-        dic_usuarios[nr_cpf] = usuario
         functions.delay(0.4)
         functions.new_line()
         print("[CONFIRMAÇÃO]")
@@ -95,25 +100,31 @@ def cadastro(dic_usuarios):
             print("Tudo bem! Tente novamente.")
             functions.new_line()
             continue
-    return dic_usuarios
+
+    # Salva cadastro no banco de dados
 
 
-def logar(dic_usuarios):
+    return
+
+
+def logar():
     """
     Função que loga o usuário, validando CPF e senha.
-    :param dic_usuarios: Dicionário com todos os usuários, com a chave sendo o CPF.
-    :return: Chave do dicionário.
+    :return: Objeto do cliente.
     """
     while True:
         print("[ÁREA DE LOGIN]")
 
-        # Procura a chave no dicionário
+        # Valida login
         nr_cpf = input("Digite o seu CPF: ")
-        validacao_email = dic_usuarios.get(nr_cpf)
-
-        # Se não achar, dá a opção de tentar novamente ou sair
-        if validacao_email is None:
-            print("[CPF NÃO ENCONTRADO]")
+        if '.' in nr_cpf or '-' in nr_cpf:
+            nr_cpf = ''.join(filter(str.isdigit, nr_cpf))
+        senha = input("Digite a sua senha: ")
+        try:
+            usuario = scripts.scripts_login('VALIDAR', cpf=nr_cpf, senha=senha)
+        # CPF não existe
+        except KeyError:
+            print("\n[CPF NÃO ENCONTRADO]")
             escolha = functions.tentar_novamente()
             if escolha == "S":
                 functions.new_line()
@@ -121,28 +132,29 @@ def logar(dic_usuarios):
             else:
                 break
 
-        # Se achar, verifica se a senha é a mesma digitada
-        else:
-            senha_login = input("Digite a sua senha: ")
-            valida_senha = dic_usuarios[nr_cpf]
-
-            # Loga o usuário
-            if valida_senha.senha == senha_login:
-                functions.delay(0.5)
-                functions.new_line()
-                print("Entrando...")
-                functions.delay(1)
-                return nr_cpf
-
-            # Outra tentativa ou sair
+        # Senha incorreta
+        except ValueError:
+            print("\n[SENHA INCORRETA]")
+            escolha = functions.tentar_novamente()
+            functions.new_line()
+            if escolha == "S":
+                continue
             else:
-                print("[SENHA INCORRETA]")
-                escolha = functions.tentar_novamente()
-                functions.new_line()
-                if escolha == "S":
-                    continue
-                else:
-                    break
+                break
+
+        # Login não é cadastrado
+        except AssertionError:
+            print("\n[LOGIN NÃO LOCALIZADO]")
+            escolha = functions.tentar_novamente()
+            functions.new_line()
+            if escolha == "S":
+                continue
+            else:
+                break
+
+        if usuario:
+            return usuario
+
 
 
 def itens_menu(nome):

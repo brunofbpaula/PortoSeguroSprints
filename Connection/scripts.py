@@ -1,4 +1,5 @@
 from Connection import oracle
+from Backstage.classes import Cliente
 from pandas import to_datetime
 from Backstage.functions import delay
 
@@ -35,6 +36,54 @@ def scripts_cliente(comando, lista=None, nr_cpf=None, variavel=None):
     return
 
 
+def scripts_login(acao, lista=None, cpf=None, senha=None):
+    """
+    Função para manipulação da tabela de LOGIN.
+    :param senha: Senha a ser comparada com a da query.
+    :param cpf: Parâmetro da query.
+    :param acao: Ação a ser executada.
+    :param lista: Lista de valores a serem inseridos na tabela.
+    :return: Confirmação.
+    """
+
+    if acao.upper() == "VALIDAR":
+
+        # Pega dados no banco de dados
+        dados_cliente = oracle.select('SELECT id_cliente, nome_completo, dt_nascimento, nr_cpf '
+                                      'FROM T_POR_CLIENTE WHERE nr_cpf = ', cpf)
+
+        # CPF digitado não existe na tabela
+        if not dados_cliente:
+            raise KeyError
+
+        id_cliente = dados_cliente[0]
+        dados_cliente = dados_cliente[1:]
+
+        # Login
+        dados_login = oracle.select('SELECT email_login, senha_login '
+                                    'FROM T_POR_LOGIN_CLIENTE WHERE id_cliente = ', id_cliente)
+
+        # Senha digitada não existe na tabela
+        if not dados_login:
+            raise AssertionError
+
+        senha_bd = dados_login[1]
+        dados_cliente.extend(dados_login)
+
+        # Valida se é a mesma
+        if str(senha_bd) == str(senha):
+            # Retorna cliente
+            cliente = Cliente(nome=dados_cliente[0],
+                              dt_nascimento=dados_cliente[1].strftime('%Y-%m-%d'),
+                              nr_cpf=dados_cliente[2],
+                              email=dados_cliente[3],
+                              senha=dados_cliente[-1])
+            return cliente
+        else:
+            raise ValueError
+
+
+
 if __name__ == "__main__":
 
     # Testando INSERT e DELETE
@@ -56,5 +105,11 @@ if __name__ == "__main__":
     # Testando sequence
     data_nascimento = to_datetime('1992-10-22')
     savage = [87342579091, 'Shéyaa Bin Abraham-Joseph', 31, data_nascimento, 'Homem']
+    scripts_cliente('INSERT', lista=savage)
+    scripts_cliente('DELETE', nr_cpf=savage[0])
+
+    # Testando sequence
+    data_nascimento = to_datetime('1992-10-22')
+    savage = [87342579092, 'Shéyaa Bin Abraham-Joseph', 31, data_nascimento, 'Homem']
     scripts_cliente('INSERT', lista=savage)
     scripts_cliente('DELETE', nr_cpf=savage[0])
