@@ -26,7 +26,7 @@ def insert(comando, lista):
     while True:
         try:
 
-            # Query
+            # Executa INSERT
             cursor.execute(comando, tuple(lista))
             connection.commit()
             break
@@ -45,12 +45,14 @@ def delete(comando, id_pk):
     :param id_pk: Chave primária da tabela.
     :return: None
     """
+    # Executa DELETE
     value = (id_pk,)
     cursor.execute(comando, value)
     connection.commit()
 
 
 def update(comando, lista):
+    # Executa UPDATE
     cursor.execute(comando, tuple(lista))
     connection.commit()
 
@@ -62,6 +64,7 @@ def select(comando, id_pk):
     :param id_pk: Parâmetro da query.
     :return: Dados da query numa lista.
     """
+    # Executa query
     query = comando + str(id_pk)
     cursor.execute(query)
     result = cursor.fetchall()
