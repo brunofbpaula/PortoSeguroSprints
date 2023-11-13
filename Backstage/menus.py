@@ -2,7 +2,7 @@ from Backstage import functions
 from Backstage import classes
 from random import randint
 from Connection import scripts
-
+from pandas import to_datetime
 
 def mensagem_boas_vindas():
     """
@@ -47,7 +47,9 @@ def area_login():
         # Cadastro
         elif escolha == "C":
             functions.new_line()
-            # cadastro()
+            usuario = cadastro()
+            if usuario:
+                return usuario
             functions.new_line()
             continue
 
@@ -65,7 +67,7 @@ def area_login():
             return
 
 
-def cadastro(dic_usuarios):
+def cadastro():
     print("[NOVO CADASTRO]")
     print("Crie seu login preenchendo as informações abaixo.")
     functions.delay(0.4)
@@ -77,6 +79,7 @@ def cadastro(dic_usuarios):
         nr_cpf = functions.nr_cpf_cliente()
         email = functions.email_cliente()
         senha = functions.senha_cliente()
+        genero = input('[GÊNERO] Como você se identifica.\nDigite o seu gênero: ')
         usuario = classes.Cliente(nome, dt_nascimento, nr_cpf, email, senha)
         functions.delay(0.4)
         functions.new_line()
@@ -90,10 +93,7 @@ def cadastro(dic_usuarios):
             refazer = input("Escolha uma opção: ").upper().strip()
         if refazer == "C":
             functions.new_line()
-            print("[TUDO CERTO]")
-            print("Salvando...")
-            functions.delay(1)
-            print("Acesse o menu fazendo login com CPF e SENHA.")
+            break
             functions.delay(1)
             return dic_usuarios
         elif refazer == "R":
@@ -101,10 +101,25 @@ def cadastro(dic_usuarios):
             functions.new_line()
             continue
 
-    # Salva cadastro no banco de dados
+    # Salva na tabela de clientes
+    dados_cliente = [usuario.nr_cpf,
+                     usuario.nome,
+                     usuario.idade,
+                     to_datetime(usuario.dt_nascimento),
+                     genero]
+    scripts.scripts_cliente('INSERT', dados_cliente)
 
+    # Salva na tabela de login
+    dados_login = [usuario.email,
+                   usuario.senha,
+                   'A']
+    scripts.scripts_login('INSERT', lista=dados_login, cpf=usuario.nr_cpf)
 
-    return
+    print("[TUDO CERTO]")
+    print("Salvando...")
+    functions.delay(1)
+
+    return usuario
 
 
 def logar():
@@ -156,7 +171,6 @@ def logar():
             return usuario
 
 
-
 def itens_menu(nome):
     """
     Função que printa os itens do menu principal.
@@ -173,24 +187,22 @@ def itens_menu(nome):
     print("[6] SAIR")
 
 
-def menu(dic_usuarios, nr_cpf):
+def menu(usuario):
     """
     Função que imprime e controla o fluxo do menu, contém todos os itens.
-    :param nr_cpf: Número de CPF do usuário.
-    :param dic_usuarios: Dicionário do qual será extraído as
-    informações relevante do usuário para funcionamento do menu e as suas funções.
+    :param usuario: Objeto cliente, com dados do usuário.
     :return: None.
     """
     sinistros = {}
     while True:
 
         # Se a chave não tem valor, o usuário escolheu sair
-        if nr_cpf is None:
+        if not usuario:
             functions.new_line()
             return
 
         # Nome do usuário
-        nome = dic_usuarios[nr_cpf].nome.split(" ")[0]
+        nome = usuario.nome.split(" ")[0]
 
         # Escolhendo item do menu
         itens_menu(nome)
