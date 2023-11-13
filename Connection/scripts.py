@@ -51,7 +51,6 @@ def scripts_login(acao, lista=None, cpf=None, senha=None):
 
         id_cliente = oracle.select('SELECT id_cliente FROM T_POR_CLIENTE WHERE nr_cpf = ', cpf)
         lista.insert(0, id_cliente[0])
-        print(lista)
         oracle.insert('INSERT INTO T_POR_LOGIN_CLIENTE(id_login_cliente, id_cliente, email_login, senha_login, '
                       'st_login) VALUES (T_POR_LOGIN_CLIENTE_seq.nextval, :id, :email, :senha, :st)', lista)
 
