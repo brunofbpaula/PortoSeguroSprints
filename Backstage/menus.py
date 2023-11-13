@@ -2,6 +2,7 @@ from Backstage import functions
 from Backstage import classes
 from Connection import scripts
 from pandas import to_datetime
+from Connection.oracle import connection, cursor
 
 
 def mensagem_boas_vindas():
@@ -112,6 +113,7 @@ def cadastro():
             print("[TUDO CERTO]")
             print("Salvando...")
             functions.delay(1)
+            functions.new_line()
 
             return usuario
 
@@ -119,8 +121,6 @@ def cadastro():
             print("Tudo bem! Tente novamente.")
             functions.new_line()
             continue
-
-
 
 
 def logar():
@@ -227,6 +227,11 @@ def menu(usuario):
 
         # Sair do menu
         else:
+
+            # Fecha conexão
+            cursor.close()
+            connection.close()
+
             break
     return
 
