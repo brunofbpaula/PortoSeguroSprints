@@ -35,8 +35,6 @@ def insert(comando, lista):
         except cx_Oracle.IntegrityError:
             print("O ID digitado já existe.")
             values[0] = int(input("Digite um novo valor de ID: "))
-
-    print('\n[CADASTRADO COM SUCESSO]\n')
     return
 
 
@@ -51,14 +49,10 @@ def delete(comando, id_pk):
     cursor.execute(comando, value)
     connection.commit()
 
-    print('\n[DELETADO COM SUCESSO]\n')
-
 
 def update(comando, lista):
     cursor.execute(comando, tuple(lista))
     connection.commit()
-
-    print('\n[ATUALIZADO COM SUCESSO]')
 
 
 def select(comando, id_pk):
