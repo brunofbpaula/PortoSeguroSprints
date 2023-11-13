@@ -91,8 +91,23 @@ def scripts_login(acao, lista=None, cpf=None, senha=None):
             raise ValueError
 
 
-if __name__ == "__main__":
+def scripts_veiculo(comando, lista=None, cpf=None, chassi=None):
+    if comando == 'INSERT':
+        id_cliente = oracle.select('SELECT id_cliente FROM T_POR_CLIENTE WHERE nr_cpf = ', cpf)
+        lista.insert(0, id_cliente[0])
+        oracle.insert('INSERT INTO T_POR_VEICULO(id_veiculo, id_cliente, nm_chassi, marca, '
+                      'modelo, nm_ano, nm_placa, blindagem, tp_combustivel) VALUES(T_POR_VEICULO_seq.nextval, '
+                      ':id, :chassi, :marca, :mod, :ano, :placa, :blind, :combus)', lista)
 
+    elif comando == 'DELETE':
+        oracle.delete('DELETE FROM T_POR_VEICULO WHERE nm_chassi = :chassi', chassi)
+
+    elif comando == 'UPDATE':
+        oracle.update('UPDATE T_POR_VEICULO SET marca = :marca, modelo = :modelo, nm_ano = :ano, nm_placa = :placa, '
+                      'blindagem = :blindagem, tp_combustivel = :combustivel WHERE nm_chassi = :chassi', lista)
+
+
+if __name__ == "__main__":
     # Testando INSERT e DELETE
     data_nascimento = to_datetime('2004-08-04')
     lipe = [9, 11732549742, 'Felipe de Almeida Cardoso', 19, data_nascimento, 'Homem']

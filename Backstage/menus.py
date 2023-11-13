@@ -3,6 +3,7 @@ from Backstage import classes
 from Connection import scripts
 from pandas import to_datetime
 from Connection.oracle import connection, cursor
+from Connection import oracle
 
 
 def mensagem_boas_vindas():
@@ -129,13 +130,14 @@ def logar():
     :return: Objeto do cliente.
     """
     while True:
-        print("[ÁREA DE LOGIN]")
+        print("[LOGIN]\n"
+              "Acesse o menu com seu login.")
 
         # Valida login
-        nr_cpf = input("Digite o seu CPF: ")
+        nr_cpf = input("[NÚMERO DE CPF] Digite o seu CPF: ")
         if '.' in nr_cpf or '-' in nr_cpf:
             nr_cpf = ''.join(filter(str.isdigit, nr_cpf))
-        senha = input("Digite a sua senha: ")
+        senha = input("[SENHA] Digite a sua senha: ")
         try:
             usuario = scripts.scripts_login('VALIDAR', cpf=nr_cpf, senha=senha)
         # CPF não existe
@@ -169,6 +171,8 @@ def logar():
                 break
 
         if usuario:
+            print('Entrando...')
+            functions.delay(2)
             return usuario
 
 
@@ -221,7 +225,7 @@ def menu(usuario):
             continue
 
         # Voltar para o login
-        elif escolha == 4:
+        elif escolha == 3:
             usuario = area_login()
             continue
 
@@ -239,11 +243,159 @@ def menu(usuario):
 # Meus veículos
 def meus_veiculos(usuario):
     print('[MEUS VEÍCULOS]\n'
-          'Escolha uma ação\n'
+          'Escolha uma ação.\n'
           '[A] Adicionar veículo\n'
           '[D] Deletar veículo\n'
           '[E] Editar veículo\n'
-          '[V] Visualizar veículos')
+          '[V] Visualizar veículos'
+          '[M] Voltar ao menu')
+
+    # Força escolha
+    opcoes = ['A', 'D', 'E', 'V']
+    while True:
+        escolha = input("Digite a ação desejada: ")
+        if escolha.upper() in opcoes:
+            functions.new_line()
+            break
+        else:
+            print("[AÇÃO INVÁLIDA]")
+
+    # CRUD
+
+    # Insert
+    if escolha == "A":
+        print('[NOVO VEÍCULO]')
+        dados = dados_veiculo('INSERT')
+        scripts.scripts_veiculo('INSERT', cpf=usuario.nr_cpf, lista=dados)
+        print('[ADICIONADO] Tudo certo.\n'
+              'Voltando...')
+        functions.new_line()
+        functions.delay(3)
+
+    # Delete
+    elif escolha == 'D':
+        functions.delay(1)
+        print('[ATENÇÃO]')
+        print('Essa ação não pode ser desfeita. Continuar?')
+        opcao = functions.confirmar()
+        if opcao == 1:
+            chassi = input('Digite o número do chassi do veículo a ser deletado: ')
+            scripts.scripts_veiculo('DELETE', chassi=chassi)
+            print('[DELETADO] Removido com sucesso.\n'
+                  'Voltando...')
+            functions.new_line()
+            functions.delay(3)
+        else:
+            print('Voltando...')
+            functions.delay(1.5)
+
+    # Update
+    elif escolha == 'E':
+        print('[ATUALIZAR VEÍCULO]\n'
+              'Informe os dados a seguir para atualizar um veículo.')
+        dados = dados_veiculo('UPDATE')
+        scripts.scripts_veiculo('UPDATE', lista=dados)
+        print('[ATUALIZADO] Tudo certo.\n'
+              'Voltando...')
+        functions.new_line()
+        functions.delay(3)
+
+    # Select
+    elif escolha == 'V':
+
+        # Pega ID
+        id_cliente = oracle.select('SELECT id_cliente FROM T_POR_CLIENTE WHERE nr_cpf = ', usuario.nr_cpf)
+        comando = 'SELECT nm_chassi, marca, modelo, nm_ano, nm_placa, ' \
+                  'blindagem, tp_combustivel FROM T_POR_VEICULO WHERE id_cliente = '
+
+        # Executa query
+        query = comando + str(id_cliente[0])
+        cursor.execute(query)
+        result = cursor.fetchall()
+        veiculos = result
+        for veiculo in veiculos:
+
+            # Formata blindagem
+            blindagem = veiculo[-2]
+            if blindagem == 0:
+                blindagem = 'NÃO'
+            else:
+                blindagem = 'SIM'
+
+            # Imprime veículos
+            print(f'[VEÍCULO] {veiculo[1]} {veiculo[2]} {veiculo[3]}\n'
+                  f'[NÚMERO DE CHASSI] {veiculo[0]}\n'
+                  f'[VEÍCULO BLINDADO] {blindagem}\n'
+                  f'[TIPO DE COMBUSTÍVEL] {veiculo[-1]}\n')
+            functions.delay(2.5)
+        print('Voltando...\n')
+        functions.delay(1)
+
+    elif escolha == 'M':
+        print('Voltando...')
+        functions.delay(2)
+        return
+
+
+def dados_veiculo(comando):
+
+    dados = []
+
+    refazer = "R"
+    while refazer == "R":
+        if comando == 'UPDATE':
+            nm_chassi = input('[NÚMERO DE CHASSI] Digite o número de chassi do veículo a ser modificado: ')
+            print('[NOVOS DADOS] Digite os novos dados do veículo!')
+        else:
+            nm_chassi = input('[NÚMERO DE CHASSI] Digite o número de chassi: ')
+        marca = input('[MARCA] Digite a marca do veículo: ')
+        modelo = input('[MODELO] Digite o modelo do veículo: ')
+
+        nm_ano = int(input('[ANO DE FABRICAÇÃO] Digite o ano de fabricação do veículo: '))
+        while nm_ano != int(nm_ano):
+            print('[DIGITE UM ANO VÁLIDO]')
+            nm_ano = int('Digite o ano de fabricação do veículo: ')
+
+        placa = input('[PLACA] Digite o número da placa do veículo: ')
+
+        blindagem = input('[BLINDAGEM] O veículo possui blindagem?: ')
+        while blindagem.upper() not in ['SIM', 'NÃO', 'S', 'N']:
+            print('[RESPOSTA INESPERADA]')
+            blindagem = input('\n[BLINDAGEM] O veículo possui blindagem?: ')
+        if blindagem == 'SIM' or blindagem == 'S':
+            blindagem = 0
+        else:
+            blindagem = 1
+
+        combustivel = input('[COMBUSTÍVEL] Digite o tipo de combustível utilizado: ')
+
+        functions.delay(0.4)
+        functions.new_line()
+
+        # Confirmação
+        print("[CONFIRMAÇÃO]")
+        print("Certifique-se de que todos os dados fornecidos estão corretos.")
+        print("[C] Continuar")
+        print("[R] Refazer")
+        refazer = input("Escolha uma opção: ").upper().strip()
+        while refazer != str(refazer) or refazer != "C" and refazer != "R":
+            print("[ESCOLHA UMA OPÇÃO VÁLIDA]")
+            refazer = input("Escolha uma opção: ").upper().strip()
+
+        if refazer == "C":
+            functions.new_line()
+            functions.delay(1)
+
+            if comando == 'INSERT':
+                dados = [nm_chassi, marca, modelo, nm_ano, placa, blindagem, combustivel]
+            elif comando == 'UPDATE':
+                dados = [marca, modelo, nm_ano, placa, blindagem, combustivel, nm_chassi]
+            return dados
+
+        elif refazer == "R":
+            print("Tudo bem! Tente novamente.")
+            functions.new_line()
+            continue
 
 
 if __name__ == "__main__":
