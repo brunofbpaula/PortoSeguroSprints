@@ -5,4 +5,3 @@ mensagem_boas_vindas()
 cliente = area_login()
 menu(cliente)
 volte_sempre()
-
