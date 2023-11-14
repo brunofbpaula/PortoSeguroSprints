@@ -2,6 +2,8 @@ from Connection import oracle
 from Backstage.classes import Cliente
 from pandas import to_datetime
 from Backstage.functions import delay
+from datetime import datetime
+from Connection.oracle import cursor
 
 
 def scripts_cliente(comando, lista=None, nr_cpf=None, variavel=None):
@@ -105,6 +107,71 @@ def scripts_veiculo(comando, lista=None, cpf=None, chassi=None):
     elif comando == 'UPDATE':
         oracle.update('UPDATE T_POR_VEICULO SET marca = :marca, modelo = :modelo, nm_ano = :ano, nm_placa = :placa, '
                       'blindagem = :blindagem, tp_combustivel = :combustivel WHERE nm_chassi = :chassi', lista)
+
+
+def scripts_ocorrencia(comando, sinistro=None, local=None, nr_cpf=None, chassi=None, identificador=None):
+    if comando == 'INSERT':
+        # Pega ID
+        id_cliente = oracle.select('SELECT id_cliente FROM T_POR_CLIENTE WHERE nr_cpf = ', nr_cpf)
+        id_cliente = id_cliente[0]
+
+        # Pega ID
+        comando = "SELECT id_veiculo FROM T_POR_VEICULO WHERE nm_chassi = "
+
+        # Executa query
+        query = comando + str(f'\'{chassi}\'')
+        cursor.execute(query)
+        result = cursor.fetchall()
+        id_veiculo = result[0]
+        id_veiculo = id_veiculo[0]
+
+        # Data hora
+        timestamp = datetime.now()
+
+        dados = [id_cliente, id_veiculo, timestamp]
+
+        oracle.insert('INSERT INTO T_POR_LOCAL_SINISTRO(id_local_sinistro, nr_rua, nm_rua, sentido_rua) '
+                      'VALUES (T_POR_LOCAL_SINISTRO_seq.nextval, :nr, :rua, :sentido) ', local)
+
+        oracle.insert('INSERT INTO T_POR_SINISTRO(id_sinistro, id_local_sinistro, tp_sinistro, causa_sinistro, '
+                      'descricao_sinistro) VALUES (T_POR_SINISTRO_seq.nextval, T_POR_LOCAL_SINISTRO_seq.currval, '
+                      ':tp_sinistro, :causa_sinistro, :descricao) ', sinistro)
+
+        oracle.insert('INSERT INTO T_POR_AVISO_SINISTRO(id_aviso_sinistro, id_cliente, id_sinistro, '
+                      'id_veiculo, dt_hr_aviso) VALUES (T_POR_AVISO_SINISTRO_seq.nextval, '
+                      ':cliente, T_POR_SINISTRO_seq.currval, :veiculo, :dthr)', dados)
+
+    elif comando == 'SELECT':
+
+        comando = str('SELECT C.id_aviso_sinistro, A.nome_completo, B.marca, B.modelo, B.nm_ano, B.nm_placa, '
+                      'D.tp_sinistro, D.causa_sinistro, D.descricao_sinistro, E.nm_rua, E.nr_rua FROM '
+                      'T_POR_CLIENTE A INNER JOIN T_POR_VEICULO B ON A.id_cliente = B.id_cliente '
+                      'INNER JOIN T_POR_AVISO_SINISTRO C ON A.id_cliente = C.id_cliente '
+                      'INNER JOIN T_POR_SINISTRO D ON C.id_sinistro = D.id_sinistro '
+                      'INNER JOIN T_POR_LOCAL_SINISTRO E ON E.id_local_sinistro = D.id_local_sinistro '
+                      f'WHERE A.nr_cpf = {nr_cpf} AND B.id_veiculo '
+                      'IN (SELECT id_veiculo FROM T_POR_AVISO_SINISTRO) '
+                      'ORDER BY C.id_aviso_sinistro')
+
+        cursor.execute(comando)
+        pedidos = cursor.fetchall()
+
+        return pedidos
+
+    elif comando == 'DELETE':
+
+        # Pega ID
+        id_sinistro = oracle.select('SELECT id_sinistro FROM T_POR_AVISO_SINISTRO WHERE id_aviso_sinistro = ',
+                                    identificador)
+        id_sinistro = id_sinistro[0]
+
+        # Pega ID
+        id_local = oracle.select('SELECT id_local_sinistro FROM T_POR_SINISTRO WHERE id_sinistro = ', id_sinistro)
+        id_local = id_local[0]
+
+        oracle.delete('DELETE FROM T_POR_AVISO_SINISTRO WHERE id_aviso_sinistro = :aviso', identificador)
+        oracle.delete('DELETE FROM T_POR_SINISTRO WHERE id_sinistro = :sinistro', id_sinistro)
+        oracle.delete('DELETE FROM T_POR_LOCAL_SINISTRO WHERE id_local_sinistro = :locsin', id_local)
 
 
 if __name__ == "__main__":

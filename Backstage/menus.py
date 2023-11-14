@@ -218,8 +218,7 @@ def menu(usuario):
 
         # Aviso de sinistro
         elif escolha == 2:
-            print("[AVISO DE SINISTRO]")
-            print("EM MANUTENÇÃO. TENTE NOVAMENTE MAIS TARDE.")
+            aviso_sinistro(usuario)
             functions.new_line()
             functions.delay(3)
             continue
@@ -247,7 +246,7 @@ def meus_veiculos(usuario):
           '[A] Adicionar veículo\n'
           '[D] Deletar veículo\n'
           '[E] Editar veículo\n'
-          '[V] Visualizar veículos'
+          '[V] Visualizar veículos\n'
           '[M] Voltar ao menu')
 
     # Força escolha
@@ -261,7 +260,7 @@ def meus_veiculos(usuario):
             print("[AÇÃO INVÁLIDA]")
 
     # CRUD
-
+    escolha.upper()
     # Insert
     if escolha == "A":
         print('[NOVO VEÍCULO]')
@@ -363,9 +362,9 @@ def dados_veiculo(comando):
             print('[RESPOSTA INESPERADA]')
             blindagem = input('\n[BLINDAGEM] O veículo possui blindagem?: ')
         if blindagem == 'SIM' or blindagem == 'S':
-            blindagem = 0
-        else:
             blindagem = 1
+        else:
+            blindagem = 0
 
         combustivel = input('[COMBUSTÍVEL] Digite o tipo de combustível utilizado: ')
 
@@ -396,6 +395,141 @@ def dados_veiculo(comando):
             print("Tudo bem! Tente novamente.")
             functions.new_line()
             continue
+
+
+def aviso_sinistro(usuario):
+    # Opções
+    print('[AVISO DE SINISTRO]\n'
+          'Escolha uma ação.\n'
+          '[S] Solicitar socorro\n' 
+          '[D] Deletar socorro\n'
+          '[P] Meus pedidos de socorro\n'
+          '[M] Voltar ao menu')
+
+    # Força escolha
+    opcoes = ['S', 'D', 'P', 'M']
+    while True:
+        escolha = input("Digite a ação desejada: ")
+        if escolha.upper() in opcoes:
+            functions.new_line()
+            break
+        else:
+            print("[AÇÃO INVÁLIDA]")
+
+    # CRUD
+    escolha = escolha.upper()
+    # INSERT
+    if escolha == 'S':
+        print('[SOLICITAÇÃO DE SOCORRO]\n'
+              'Informe os dados a seguir para conseguir assistência.')
+
+        refazer = "R"
+        while refazer == "R":
+
+            nm_chassi = input('[VEÍCULO DANIFICADO] Informe o número de chassi do veículo: ')
+            sinistro = dados_sinistro()
+            local = dados_local()
+
+            functions.delay(0.4)
+            functions.new_line()
+
+            # Confirmação
+            print("[CONFIRMAÇÃO]")
+            print("Certifique-se de que todos os dados fornecidos estão corretos.")
+            print("[C] Continuar")
+            print("[R] Refazer")
+            refazer = input("Escolha uma opção: ").upper().strip()
+            while refazer != str(refazer) or refazer != "C" and refazer != "R":
+                print("[ESCOLHA UMA OPÇÃO VÁLIDA]")
+                refazer = input("Escolha uma opção: ").upper().strip()
+
+            if refazer == "C":
+                functions.new_line()
+                functions.delay(1)
+
+                scripts.scripts_ocorrencia(comando='INSERT', sinistro=sinistro, local=local, nr_cpf=usuario.nr_cpf,
+                                           chassi=nm_chassi)
+                print('[ADICIONADO] Tudo certo.\n'
+                      'V'
+                      'Voltando...')
+                functions.new_line()
+                functions.delay(3)
+
+            elif refazer == "R":
+                print("Tudo bem! Tente novamente.")
+                functions.new_line()
+                continue
+
+    # SELECT
+    elif escolha == 'P':
+
+        pedidos = scripts.scripts_ocorrencia('SELECT', nr_cpf=usuario.nr_cpf)
+        if pedidos:
+            for pedido in pedidos:
+
+                # Imprime veículos
+                print(f'[IDENTIFICADOR SINISTRO] {pedido[0]}\n'
+                      f'[SOLICITANTE] {pedido[1]}\n'
+                      f'[VEÍCULO] {pedido[2]} {pedido[3]} {pedido[4]}\n'
+                      f'[PLACA DO VEÍCULO] {pedido[5]}\n'
+                      f'[SINISTRO] {pedido[6]} - {pedido[7]}\n'
+                      f'[LOCAL DO SINISTRO] {pedido[-2]} {pedido[-1]}\n')
+                functions.delay(2.5)
+            print('Voltando...')
+            functions.delay(1)
+        else:
+            print('[NENHUM PEDIDO ENCONTRADO]')
+            print('Voltando...')
+            functions.delay(1)
+
+    # DELETE
+    elif escolha == 'D':
+        functions.delay(1)
+        print('[ATENÇÃO]')
+        print('Essa ação não pode ser desfeita. Continuar?')
+        opcao = functions.confirmar()
+        if opcao == 1:
+            ident = input('Digite o identificador do aviso de sinistro a ser deletado: ')
+            scripts.scripts_ocorrencia('DELETE', identificador=ident)
+            print('\n[DELETADO] Removido com sucesso.\n'
+                  'Voltando...')
+            functions.delay(3)
+        else:
+            print('Voltando...')
+            functions.delay(1.5)
+
+    # MENU
+    elif escolha == 'M':
+        print('Voltando...')
+        functions.delay(1)
+
+
+def dados_local():
+
+    rua = input('[NOME DA RUA] Digite a rua: ')
+    nr = input('[NÚMERO DA RUA] Digite o número da rua: ')
+    sentido = input('[SENTIDO DA VIA] Crescente ou decrescente: ')
+    while sentido.upper() not in ['CRESCENTE', 'C', 'CRESC', 'D', 'DESC', 'DECRESCENTE']:
+        print('[RESPOSTA INESPERADA]')
+        sentido = input('[SENTIDO DA VIA] Crescente ou decrescente: ')
+
+    if sentido.upper() in ['CRESCENTE', 'C', 'CRESC']:
+        sentido = 'C'
+    else:
+        sentido = 'D'
+
+    dados = [nr, rua, sentido]
+    return dados
+
+
+def dados_sinistro():
+
+    sinistro = input('[SINISTRO] Digite o problema: ')
+    causa = input('[CAUSA] O que causou o problema: ')
+    descricao = input('[DESCRIÇÃO] Descreva um breve resumo do ocorrido: ')
+
+    dados = [sinistro, causa, descricao]
+    return dados
 
 
 if __name__ == "__main__":

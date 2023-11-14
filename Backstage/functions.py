@@ -135,11 +135,16 @@ def escolher_item():
     Função para escolher um dos itens do menu principal.
     :return: Número do item escolhido.
     """
-    item_escolhido = float(input("Digite o número do item desejado: "))
-    while item_escolhido != int(item_escolhido) or item_escolhido > 4 or item_escolhido < 1:
-        print("[OPÇÃO INVÁLIDA]")
-        item_escolhido = float(input("Digite o número do item desejado: "))
-    return item_escolhido
+    while True:
+        try:
+            item_escolhido = int(input("Digite o número do item desejado: "))
+            while item_escolhido > 4 or item_escolhido < 1:
+                print("[OPÇÃO INVÁLIDA]")
+                item_escolhido = int(input("Digite o número do item desejado: "))
+            return item_escolhido
+
+        except ValueError:
+            print("[OPÇÃO INVÁLIDA]")
 
 
 def confirmar():
