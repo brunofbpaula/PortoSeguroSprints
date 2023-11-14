@@ -39,6 +39,11 @@ def menu_login():
 
 
 def area_login():
+    """
+    Função que coleta dados ou injeta nas tabelas do banco, para preencher o objeto
+    da classe Cliente, necessário para funcionamento do menu.
+    :return: Objeto Cliente.
+    """
     while True:
         escolha = menu_login()
 
@@ -70,6 +75,11 @@ def area_login():
 
 
 def cadastro():
+    """
+    Função que coleta e injeta dados no banco de dados nas tabelas do CLIENTE,
+    além de retornar um objeto preenchido.
+    :return: Objeto Cliente.
+    """
     print("[NOVO CADASTRO]")
     print("Crie seu login preenchendo as informações abaixo.")
     functions.delay(0.4)
@@ -126,7 +136,7 @@ def cadastro():
 
 def logar():
     """
-    Função que loga o usuário, validando CPF e senha.
+    Função que loga o usuário, validando CPF e senha com os valores das tabelas do banco de dados.
     :return: Objeto do cliente.
     """
     while True:
@@ -241,6 +251,12 @@ def menu(usuario):
 
 # Meus veículos
 def meus_veiculos(usuario):
+    """
+    Item que imprime as opções do item 'MEUS VEÍCULOS',
+    além de executar todas as opções.
+    :param usuario: Objeto usuário.
+    :return: None.
+    """
     print('[MEUS VEÍCULOS]\n'
           'Escolha uma ação.\n'
           '[A] Adicionar veículo\n'
@@ -337,6 +353,12 @@ def meus_veiculos(usuario):
 
 
 def dados_veiculo(comando):
+    """
+    Função que coleta dados de veículo.
+    :param comando: Comando que define a ordem de retorno
+    da lista de características do veículo.
+    :return: Lista de dados.
+    """
 
     dados = []
 
@@ -398,6 +420,11 @@ def dados_veiculo(comando):
 
 
 def aviso_sinistro(usuario):
+    """
+    Função do item 'AVISO DE SINISTRO', que imprime as suas opções e as executa.
+    :param usuario: Objeto Cliente.
+    :return: None.
+    """
     # Opções
     print('[AVISO DE SINISTRO]\n'
           'Escolha uma ação.\n'
@@ -505,6 +532,10 @@ def aviso_sinistro(usuario):
 
 
 def dados_local():
+    """
+    Função que coleta dados sobre o local de sinistro.
+    :return: Lista de dados.
+    """
 
     rua = input('[NOME DA RUA] Digite a rua: ')
     nr = input('[NÚMERO DA RUA] Digite o número da rua: ')
@@ -523,6 +554,10 @@ def dados_local():
 
 
 def dados_sinistro():
+    """
+    Função que coleta dados sobre o sinistro.
+    :return: Lista de dados.
+    """
 
     sinistro = input('[SINISTRO] Digite o problema: ')
     causa = input('[CAUSA] O que causou o problema: ')

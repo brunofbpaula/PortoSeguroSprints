@@ -43,7 +43,7 @@ def delete(comando, id_pk):
     Função para executar um comando de delete.
     :param comando: Comando SQL.
     :param id_pk: Chave primária da tabela.
-    :return: None
+    :return: None.
     """
     # Executa DELETE
     value = (id_pk,)
@@ -52,6 +52,12 @@ def delete(comando, id_pk):
 
 
 def update(comando, lista):
+    """
+    Função para executar comando de ‘update’.
+    :param comando: Comando a ser executado.
+    :param lista: Parâmetros.
+    :return: None.
+    """
     # Executa UPDATE
     cursor.execute(comando, tuple(lista))
     connection.commit()

@@ -92,6 +92,10 @@ def nr_cpf_cliente():
 
 
 def email_cliente():
+    """
+    Função que valida o formato de um e-mail.
+    :return: E-mail.
+    """
     print("[EMAIL] O seu melhor e-mail é o recomendado.")
     email = input("Digite o e-mail: ")
 
@@ -104,6 +108,10 @@ def email_cliente():
 
 
 def senha_cliente():
+    """
+    Função que retorna uma senha de comprimento mínimo de seis caracteres.
+    :return: Senha.
+    """
     print("[SENHA] A sua senha deve conter no mínimo seis digitos.")
     senha = input("Digite a senha: ")
 

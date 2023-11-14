@@ -94,6 +94,14 @@ def scripts_login(acao, lista=None, cpf=None, senha=None):
 
 
 def scripts_veiculo(comando, lista=None, cpf=None, chassi=None):
+    """
+    Função que realiza operações CRUD na tabela de veículos.
+    :param comando: Comando a ser executado.
+    :param lista: Valores parâmetros.
+    :param cpf: Parâmetro único.
+    :param chassi: Parâmetro único.
+    :return: Lista de veículos.
+    """
     if comando == 'INSERT':
         id_cliente = oracle.select('SELECT id_cliente FROM T_POR_CLIENTE WHERE nr_cpf = ', cpf)
         lista.insert(0, id_cliente[0])
@@ -110,6 +118,17 @@ def scripts_veiculo(comando, lista=None, cpf=None, chassi=None):
 
 
 def scripts_ocorrencia(comando, sinistro=None, local=None, nr_cpf=None, chassi=None, identificador=None):
+    """
+    Função de inserção, removação e seleção de dados nas tabelas de AVISO SINISTRO,
+    SINISTRO e LOCAL SINISTRO.
+    :param comando: Comando a ser executado.
+    :param sinistro: Lista de dados do sinistro.
+    :param local: Lista de dados local do sinistro.
+    :param nr_cpf: Parâmetro único.
+    :param chassi: Parâmetro único.
+    :param identificador: Chave primária da tabela AVISO SINISTRO.
+    :return: Consulta com subconsulta com dados da ocorrência.
+    """
     if comando == 'INSERT':
         # Pega ID
         id_cliente = oracle.select('SELECT id_cliente FROM T_POR_CLIENTE WHERE nr_cpf = ', nr_cpf)
